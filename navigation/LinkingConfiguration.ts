@@ -20,9 +20,9 @@ const linking: LinkingOptions<RootStackParamList> = {
               HomeScreen: 'home',
             },
           },
-          Plofile: {
+          Profile: {
             screens: {
-              PlofileScreen: 'plofile',
+              ProfileScreen: 'profile',
             },
           },
           Experiment: {

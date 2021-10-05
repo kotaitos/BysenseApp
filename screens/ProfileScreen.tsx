@@ -6,7 +6,7 @@ import { Text, View } from '../components/Themed';
 export default function TabOneScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Plofile screen.</Text>
+      <Text style={styles.title}>Profile screen.</Text>
     </View>
   );
 }
