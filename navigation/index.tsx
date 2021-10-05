@@ -14,8 +14,9 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
-import TabOneScreen from '../screens/TabOneScreen';
-import TabTwoScreen from '../screens/TabTwoScreen';
+import HomeScreen from '../screens/HomeScreen';
+import PlofileScreen from '../screens/PlofileScreen';
+import ExperimentScreen from '../screens/ExperimentScreen';
 import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 
@@ -58,15 +59,15 @@ function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="TabOne"
+      initialRouteName="Home"
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme].tint,
       }}>
       <BottomTab.Screen
-        name="TabOne"
-        component={TabOneScreen}
-        options={({ navigation }: RootTabScreenProps<'TabOne'>) => ({
-          title: 'Tab One',
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation }: RootTabScreenProps<'Home'>) => ({
+          title: 'Home',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
           headerRight: () => (
             <Pressable
@@ -85,10 +86,18 @@ function BottomTabNavigator() {
         })}
       />
       <BottomTab.Screen
-        name="TabTwo"
-        component={TabTwoScreen}
+        name="Plofile"
+        component={PlofileScreen}
         options={{
-          title: 'Tab Two',
+          title: 'Plofile',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <BottomTab.Screen
+        name="Experiment"
+        component={ExperimentScreen}
+        options={{
+          title: 'Experiment',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
