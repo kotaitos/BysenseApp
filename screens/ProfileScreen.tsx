@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 
 import { Text, View } from '../components/Themed';
 
-export default function TabOneScreen() {
+export default function ProfileScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Profile screen.</Text>

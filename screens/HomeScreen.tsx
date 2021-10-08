@@ -1,14 +1,11 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-
-import { Text, View } from '../components/Themed';
 import { RootTabScreenProps } from '../types';
+import Map from '../components/MapConponent';
 
-export default function TabOneScreen({ navigation }: RootTabScreenProps<'Home'>) {
+export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Home screen.</Text>
-    </View>
+    <Map/>
   );
 }
 
