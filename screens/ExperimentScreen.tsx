@@ -1,13 +1,11 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-
+import TrackingButton from '../components/TrackingButton';
 import { Text, View } from '../components/Themed';
 
 export default function ExperimentScreen() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Experiment screen.</Text>
-    </View>
+    TrackingButton()
   );
 }
 
@@ -16,9 +14,5 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
   },
 });
