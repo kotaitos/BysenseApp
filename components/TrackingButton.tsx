@@ -3,6 +3,9 @@ import { StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-nativ
 import { Accelerometer } from 'expo-sensors';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { Contoroller as FirestoreContoroller } from '../firebase/firestore';
+import { Contoroller as StorageController } from '../firebase/storage';
+import { arrToString } from '../util/arrToString';
+import { exportToLocal } from '../util/exportToLocal';
 
 export default function App() {
   const [acc, setData] = useState({
@@ -31,6 +34,9 @@ export default function App() {
     subscription && subscription.remove();
     setSubscription(null);
     const id = FirestoreContoroller.add(experimentName, startAt, buffer.acc.length / 10);
+    let type = 'acc';
+    const csvText = arrToString(buffer.acc, '\t', '\r\n');
+    StorageController.upload(id, type, csvText);
     _reset();
   };
 
@@ -61,6 +67,7 @@ export default function App() {
       onChangeText={(text) => setExperimentName(text)}
       placeholder='実験名を入力してください'
       placeholderTextColor="gray"
+      value={experimentName}
       />
       <View style={experimentName ? styles.buttonContainer : styles.buttonContainerDisabled}>
         <TouchableOpacity onPress={subscription ? _unsubscribe : _subscribe} style={styles.button} disabled={experimentName ? false : true}>
