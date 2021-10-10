@@ -1,21 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
-import { Accelerometer } from 'expo-sensors';
+import {
+  Accelerometer,
+  Barometer,
+  Gyroscope,
+  Magnetometer,
+  MagnetometerUncalibrated,
+  Pedometer,
+} from 'expo-sensors';
 import { Subscription } from '@unimodules/react-native-adapter';
 import { Contoroller as FirestoreContoroller } from '../firebase/firestore';
 import { Contoroller as StorageController } from '../firebase/storage';
 import { arrToString } from '../util/arrToString';
-import { exportToLocal } from '../util/exportToLocal';
 
 export default function App() {
-  const [acc, setData] = useState({
+  const [acc, setAcc] = useState({
     x: 0,
     y: 0,
     z: 0,
   });
+  const [gyro, setGyro] = useState({
+    x: 0,
+    y: 0,
+    z: 0,
+  })
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [buffer, setBuffer] = useState({
     acc: new Array(),
+    gyroscope: new Array(),
   });
   const [startAt, setStartAt] = useState<Date>(new Date(1970, 1, 1));
   const [experimentName, setExperimentName] = useState<string>('');
@@ -23,7 +35,12 @@ export default function App() {
   const _subscribe = () => {
     setSubscription(
       Accelerometer.addListener(accelerometerData => {
-        setData(accelerometerData);
+        setAcc(accelerometerData);
+      })
+    );
+    setSubscription(
+      Gyroscope.addListener(gyroscopeData => {
+        setGyro(gyroscopeData);
       })
     );
     setStartAt(new Date());
@@ -34,20 +51,26 @@ export default function App() {
     subscription && subscription.remove();
     setSubscription(null);
     const id = FirestoreContoroller.add(experimentName, startAt, buffer.acc.length / 10);
-    let type = 'acc';
-    const csvText = arrToString(buffer.acc, '\t', '\r\n');
-    StorageController.upload(id, type, csvText);
+    const accCsvText = arrToString(buffer.acc, '\t', '\r\n');
+    const gyroCsvText = 
+    StorageController.upload(id, 'acc', accCsvText);
     _reset();
   };
 
   const _reset = () => {
-    setData({
+    setAcc({
       x: 0,
       y: 0,
       z: 0,
     });
+    setGyro({
+      x: 0,
+      y: 0,
+      z: 0,
+    })
     setBuffer({
       acc: new Array(),
+      gyroscope: new Array(),
     });
     setStartAt(new Date(1970, 1, 1));
     setExperimentName('');
@@ -56,6 +79,7 @@ export default function App() {
   useEffect(() => {
     setBuffer({
       acc: [...buffer.acc, [ acc.x, acc.y, acc.z ]],
+      gyroscope: [...buffer.gyroscope, [ gyro.x, gyro.y, gyro.z ]],
     });
   }, [acc]);
 
