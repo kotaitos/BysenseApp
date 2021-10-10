@@ -1,27 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, TextInput } from 'react-native';
 import { Accelerometer } from 'expo-sensors';
 import { Subscription } from '@unimodules/react-native-adapter';
-import firebase from 'firebase';
-import 'firebase/firestore';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAv1ThhbZo9GkjBNoKGfhHZalo0Uby-5Ew",
-  authDomain: "bicycle-supporter.firebaseapp.com",
-  projectId: "bicycle-supporter",
-  storageBucket: "bicycle-supporter.appspot.com",
-  messagingSenderId: "879836047331",
-  appId: "1:879836047331:web:c9427267150ead733e22d6",
-  measurementId: "G-W3VT1BKM6S"
-};
-
-try {
-  firebase.initializeApp(firebaseConfig);
-} catch (error) {
-  console.log(error);
-  throw error;
-}
-const db = firebase.firestore();
+import { Contoroller as FirestoreContoroller } from '../firebase/firestore';
 
 export default function App() {
   const [acc, setData] = useState({
@@ -33,8 +14,8 @@ export default function App() {
   const [buffer, setBuffer] = useState({
     acc: new Array(),
   });
-  const [startAt, setStartAt] = useState(new Date());
-  const [endAt, setEndAt] = useState(new Date);
+  const [startAt, setStartAt] = useState<Date>(new Date(1970, 1, 1));
+  const [experimentName, setExperimentName] = useState<string>('');
 
   const _subscribe = () => {
     setSubscription(
@@ -49,8 +30,7 @@ export default function App() {
   const _unsubscribe = () => {
     subscription && subscription.remove();
     setSubscription(null);
-    setEndAt(new Date());
-    _upload();
+    const id = FirestoreContoroller.add(experimentName, startAt, buffer.acc.length / 10);
     _reset();
   };
 
@@ -63,18 +43,8 @@ export default function App() {
     setBuffer({
       acc: new Array(),
     });
-  };
-
-  const _upload = () => {
-    const experimentRef = db.collection('experiment');
-    let document = experimentRef.doc();
-    document.set({
-      lastUpdatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-      startAt: startAt,
-      duration: Math.floor(endAt.getTime() - startAt.getTime()) / 1000,
-      csvPath: `experiment/${document.id}`,
-    });
-    console.log(document.id);
+    setStartAt(new Date(1970, 1, 1));
+    setExperimentName('');
   };
 
   useEffect(() => {
@@ -83,15 +53,17 @@ export default function App() {
     });
   }, [acc]);
 
-  const { x, y, z } = acc;
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Accelerometer</Text>
-      <Text style={styles.text}>
-        x: {round(x)} y: {round(y)} z: {round(z)}
-      </Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={subscription ? _unsubscribe : _subscribe} style={styles.button}>
+      <TextInput
+      style={styles.textInputField}
+      onChangeText={(text) => setExperimentName(text)}
+      placeholder='実験名を入力してください'
+      placeholderTextColor="gray"
+      />
+      <View style={experimentName ? styles.buttonContainer : styles.buttonContainerDisabled}>
+        <TouchableOpacity onPress={subscription ? _unsubscribe : _subscribe} style={styles.button} disabled={experimentName ? false : true}>
           <Text>{subscription ? 'Stop' : 'Start'}</Text>
         </TouchableOpacity>
       </View>
@@ -117,11 +89,24 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     marginTop: 15,
   },
+  buttonContainerDisabled: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    marginTop: 15,
+    opacity: 0.3
+  },
   button: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#eee',
+    padding: 10,
+  },
+  textInputField: {
+    height: 40,
+    width: '80%',
+    margin: 12,
+    borderWidth: 1,
     padding: 10,
   }
 }); 
