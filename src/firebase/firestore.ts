@@ -1,4 +1,5 @@
 import firebase from './app';
+import { FileUrls } from '../interfaces';
 
 const db = firebase.firestore();
 
@@ -13,6 +14,15 @@ class Contoroller {
             duration: duration,
             csvPath: `experiment/${document.id}`,
         });
+        return document.id;
+    }
+
+    static appendFileUrls(id: string, urls: FileUrls): string {
+        const experimentRef = db.collection('experiment');
+        let document = experimentRef.doc(`${id}`);
+        document.update({
+            urls: urls,
+        })
         return document.id;
     }
 }

@@ -7,6 +7,8 @@ class Contoroller {
         const blob = new Blob([csvText], {type : 'text/tsv'});
         const ref = storage.ref(`experiment/${id}/${type}.tsv`);
         await ref.put(blob);
+        const downloadURL = await ref.getDownloadURL();
+        return downloadURL;
     }
 }
 
