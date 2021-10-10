@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import { RootTabScreenProps } from '../types';
+import { RootTabScreenProps } from '../../types';
 import Map from '../components/MapConponent';
 
 export default function HomeScreen({ navigation }: RootTabScreenProps<'Home'>) {
